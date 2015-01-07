@@ -27,6 +27,7 @@ int main() {
 	printf("Calling function...\n");
 
 	unsigned int PC = 0;
+
 	unsigned int numInstr = 5;
 	unsigned int instructions[5];
 	instructions[0] = instl(1,0,0x0);
@@ -35,11 +36,24 @@ int main() {
 	instructions[3] = insts(0,0,0x2);
 	instructions[4] = inst_end;
 
+	unsigned int numData = 3;
 	unsigned int data[] = {
 			0x1,
 			0x2,
 			0x0,
 	};
+
+	printf("Instruction Memory:\n");
+	for(int i=0; i<numInstr; i++) {
+		printf("%08X\n",instructions[i]);
+	}
+	printf("\n");
+
+	printf("Data Memory:\n");
+	for(int i=0; i<numData; i++) {
+		printf("%08X\n",data[i]);
+	}
+	printf("\n");
 
 	datapath(instructions, data);
 
