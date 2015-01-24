@@ -1,0 +1,24 @@
+================================================================
+  Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC
+  Version: 2012.4
+  Build date: Fri Dec 07 12:41:34 PM 2012
+  Copyright (C) 2012 Xilinx Inc. All rights reserved.
+================================================================
+@I [LIC-101] Checked out feature [VIVADO_HLS]
+@I [HLS-10] Running 'C:/Xilinx2/Vivado_HLS/2012.4/Win_x86/bin/vivado_hls_bin.exe'
+@I [HLS-10] On platform 'Windows NT_intel version 6.1'
+@I [HLS-10] Vivado HLS Tcl shell started on Wed Jan 14 13:17:08 -0500 2015 for user 'Sam' at host 'sam-pc'
+@I [HLS-10] Current directory: C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/datapath
+@I [HLS-10] Bringing up Vivado HLS GUI ... 
+@I [LIC-101] Checked in feature [VIVADO_HLS]
+2012.4/Win_x86/bin/vivado_hls_bin.exe C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/datapath/solution1/script.tcl
+@I [LIC-101] Checked out feature [VIVADO_HLS]
+@I [HLS-10] Running 'C:/Xilinx2/Vivado_HLS/2012.4/Win_x86/bin/vivado_hls_bin.exe'
+@I [HLS-10] On platform 'Windows NT_intel version 6.1'
+@I [HLS-10] Vivado HLS Tcl shell started on Wed Jan 14 13:17:28 -0500 2015 for user 'Sam' at host 'sam-pc'
+@I [HLS-10] Current directory: C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple
+@I [HLS-10] Opening project 'C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/datapath'.
+@I [HLS-10] Adding design file 'datapath.cpp' to the project.
+@I [HLS-10] Adding test bench file 'test.cpp' to the project.
+@I [HLS-10] Opening solution 'C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/datapath/solution1'.
+@I [SYN-201] Setting up clock 'default' with a period of 10ns.

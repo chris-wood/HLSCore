@@ -1,12 +1,17 @@
 <solution AutoPilot="com.autoesl.autopilot.solution">
     <downStreamTool>
-        <DownStreamTool name="Auto"/>
+        <DownStreamTool name=""/>
     </downStreamTool>
+    <clockList>
+        <clock default="false" name="default" period="10"/>
+        <clock default="false" name="default" period="10"/>
+    </clockList>
     <config>
         <schedule model="datapath"/>
+        <config_autosim O="0" coverage="0" ignore_init="0" setup="0" trace_level="all"/>
     </config>
     <UIConfigurations>
-        <UIAutosynConf boardInfo="ZedBoard Zynq Evaluation and Development Kit (xc7z020clg484-1) " hideTrivialOp="true" isBasedOnBoard="true" isSolutionDirty="false" showDetailDesignViewer="false">
+        <UIAutosynConf boardInfo="ZedBoard Zynq Evaluation and Development Kit (xc7z020clg484-1) " hideTrivialOp="true" isBasedOnBoard="true" isSolutionDirty="false" isStopAskAgain="false" showDetailDesignViewer="false">
             <Platform>xilinx/zynq/zynq</Platform>
             <Platform>xilinx/zynq/zynq_fpv6</Platform>
             <customLibs/>
@@ -29,10 +34,10 @@
                 <vhdlISESettings add_io_buffers="false" op_effort="high" op_goal="speed" par_effort="high" register_balancing="no" register_duplication="false"/>
             </UIAutoMGImpl>
         </UIAutoMGConf>
-        <UIAutoSimConf ApIntSupport="true" AskAgain="true" csimMode="0" lastCsimMode="8">
+        <UIAutoSimConf ApIntSupport="true" AskAgain="true" csimMode="0" lastCsimMode="0">
             <RTLs>
-                <SystemC selection="true" tool="SystemC"/>
-                <Verilog selection="false" tool="ISim"/>
+                <SystemC selection="false" tool="ISim"/>
+                <Verilog selection="true" tool="ISim"/>
                 <VHDL selection="false" tool="ISim"/>
             </RTLs>
         </UIAutoSimConf>
@@ -50,9 +55,5 @@
         <library name="DefaultPlatform" value="xilinx/zynq/zynq"/>
         <library name="DefaultPlatform" value="xilinx/zynq/zynq_fpv6"/>
     </libraryList>
-    <clockList>
-        <clock default="false" name="default" period="10"/>
-        <clock name="-" period="10" default="false"/>
-    </clockList>
 </solution>
 

@@ -1,0 +1,2 @@
+work	"../datapath/solution1/impl/vhdl/datapath.vhd"
+work	"../datapath/solution1/impl/vhdl/datapath_reg.vhd"

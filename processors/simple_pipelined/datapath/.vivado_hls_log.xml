@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vivadoHLSLog:LogRoot xmlns:vivadoHLSLog="www.xilinx.com/vivadoHLSLog">
+  <errorLogs>
+    <logs>
+      <synLog>
+        <logs message="@E [HLS-101] 'set_directive_interface': Unknown option '-latency'.&#xD;&#xA;&#xD;&#xA;FORMAT&#xD;&#xA;  set_directive_interface [OPTIONS] &lt;location> [&lt;port>]&#xD;&#xA;     location &lt;string>  (required)&#xD;&#xA;     port &lt;string> (default: return)&#xD;&#xA;    -depth &lt;int>&#xD;&#xA;    -mode ( ap_none | ap_vld | ap_ack | ap_hs | ap_ovld | ap_fifo | ap_bus | ap_memory | ap_ctrl_none | ap_ctrl_hs | ap_ctrl_chain | ap_stable )&#xD;&#xA;    -register&#xD;&#xA;&#xD;&#xA;command 'set_directive_interface' returned error code&#xD;&#xA;    while executing&#xD;&#xA;&quot;set_directive_interface -mode ap_ctrl_none -latency 0 &quot;datapath&quot;&quot;&#xD;&#xA;    (file &quot;./datapath/solution1/directives.tcl&quot; line 6)&#xD;&#xA;    invoked from within&#xD;&#xA;&quot;source &quot;./datapath/solution1/directives.tcl&quot;&quot;&#xD;&#xA;    (file &quot;C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/datapath/solution1/script.tcl&quot; line 14)" projectName="datapath" solutionName="solution1" date="2015-01-14T13:17:29.123-0500"/>
+      </synLog>
+      <simLog/>
+      <mgLog/>
+      <packageLog/>
+    </logs>
+  </errorLogs>
+  <warningLogs>
+    <logs>
+      <synLog/>
+      <simLog/>
+      <mgLog/>
+      <packageLog/>
+    </logs>
+  </warningLogs>
+</vivadoHLSLog:LogRoot>
