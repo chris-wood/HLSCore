@@ -1,0 +1,62 @@
+
+div.Question {
+background: lightblue;
+margin: 10px;
+padding: 10px;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+border: 1px solid blue;
+}
+
+table.lab {
+border-collapse:collapse;
+border: 1px solid black;
+padding: 2px;
+}
+
+table.lab td, table.lab th {
+border: 1px solid black;
+padding: 2px;
+}
+
+div.ModuleSpec {
+background: lightgreen;
+margin: 10px;
+padding: 10px;
+border: 1px solid green;
+}
+
+pre {
+    font-family: Courier New, monospace;
+    font-size: small
+}
+
+span.verilog {
+    font-family: Courier New, monospace;
+}
+
+span.file_name {
+    font-family: Arial, san serif;
+}
+
+div.ModuleSpec td, div.ModuleSpec.tr {
+	border: none;
+	padding: 2px;
+	vertical-align: middle;
+}
+
+div.ModuleSpec b {
+	display: block;
+	font-size: 15pt;
+	font-weight: bold;
+}
+
+div.IODescription table {
+	border-collapse:collapse;
+	padding: 2px;
+}
+
+div.IODescription td, div.IODescription tr {
+	border: 1px solid black;
+}	

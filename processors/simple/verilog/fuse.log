@@ -1,0 +1,16 @@
+Running: C:\Xilinx2\14.4\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/testbench_isim_beh.exe -prj C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/testbench_beh.prj work.testbench work.glbl 
+ISim P.49d (signature 0x7708f090)
+Number of CPUs detected in this system: 8
+Turning on mult-threading, number of parallel sub-compilation jobs: 16 
+Determining compilation order of HDL files
+Analyzing Verilog file "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/regFile.v" into library work
+Analyzing Verilog file "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/mem.v" into library work
+Analyzing Verilog file "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" into library work
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 58: <cs> is not declared.
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 60: <imemresp_data> is not declared.
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 64: <cs> is not declared.
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 66: <cs> is not declared.
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 67: <cs> is not declared.
+ERROR:HDLCompiler:69 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 68: <cs> is not declared.
+ERROR:HDLCompiler:598 - "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v" Line 30: Module <control> ignored due to previous errors.
+Verilog file C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/verilog/control.v ignored due to errors

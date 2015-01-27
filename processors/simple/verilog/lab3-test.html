@@ -1,0 +1,456 @@
+
+<!-- saved from url=(0055)http://cseweb.ucsd.edu/classes/sp13/cse141L-a/lab3.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>cse141L
+	  Lab 
+	  3: 
+	  Single-Cycle MIPS Control</title>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
+<link rel="stylesheet" type="text/css" href="./lab3-test_files/labs.css">
+<script src="./lab3-test_files/urchin.js" type="text/javascript"></script><script type="text/javascript">
+      _uacct = "UA-1672965-2";
+      urchinTracker();
+    </script></head>
+<body>
+<h1><a href="http://cseweb.ucsd.edu/classes/sp13/cse141L-a/">http://cseweb.ucsd.edu/classes/sp13/cse141L-a/</a></h1>
+<h1>cse141L
+	  Lab 
+	  3:
+	  Single-Cycle MIPS Control</h1>
+<hr>
+<span style="font-weight:bold"></span><p><span style="font-weight: bold">Due: </span>April 22 </p>
+<p></p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">We are putting it up early so you can get started on the implementation if you'd like.  If you start early, you'll need to read through the whole lab again when we post the final version to make sure you follow the instructions in that lab.  However, the hardware your implementing won't change substantially between this and the final version.</p>
+
+<h2 xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Overview</h2>
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">In Lab 3 you will extend the design you created in Lab 2 to implement the control 
+unit for the Single-Cycle MIPS processor.  As you probably realized throughout Lab 2, 
+it is not very easy to test each individual module completely;
+however, with the addition of Lab 3 (the control unit), testing will be much more straightforward.
+</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">The processor you build in this lab will not support branches or jumps so you 
+won't be able to run most programs, we will add support for these in a future lab, 
+along with additional instructions.  It will be enough to run some simple programs, 
+such as "Hello World" that have been written completely without branches.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><b>NOTE:</b>  You can complete lab 3 in groups of 1-3.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Please remember that you must conform to the class coding standards.  They are
+available on the wiki: <a href="https://sites.google.com/a/eng.ucsd.edu/using-the-altera-tools/coding-standards">CS141L Verilog Coding Standards</a>.</p>
+
+
+<h2 xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Getting Started</h2>
+
+<h3 xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">General Notes</h3>
+
+<ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<li>All Verilog used in these labs (except for test benches) should be synthesizable.</li>
+<!-- COMMENT
+	<li>There is an updated <span class="file_name">async_memory.v</span> module available.  This module
+contains an update to initialize all of the memory to a specific value (32'hADADADAD) instead of don't cares (32'hxxxxxxxx).  The file is available here: <a href="Media/lab3/async_memory.v">async_memory.v</a>.  You can check if you have the latest version by looking at the top of the file.  There should be a change log entry for 1/22/2012.</li>
+-->
+</ul>
+<h3 xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Controlling the Processor</h3>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">When building complex hardware like processors, its useful to separate 
+the datapath and the control decisions.  In the last lab, you built and 
+wired up all of the datapath modules.  In this lab we will connect up all 
+of the control signals (mux select inputs, adder op-codes, etc.) to a new 
+<span class="verilog">control</span> module that will be responsible for making all of the
+decisions about what input muxes should use and what operation the ALU 
+should perform.  The control module will make these decisions based on 
+the instruction fetched from the <span class="verilog">inst_mem</span> module (and maybe a few 
+other signals, later on).</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">To get started, open up your project from the last lab and make a list of all 
+of the control signals you need to connect.  This includes all of the mux selector inputs, the alu 
+function code, register file write controls and data memory control signals.</p>
+
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="Question">
+<b>Question 1:</b> Create a new module <span class="verilog">control</span> with a port 
+for each of the control signals in your project.  You will also need to have the instruction as
+an input to your control module.  Update your schematic to show your control module with the 
+ports labeled and all of the control signals connected to the appropriate modules.</div>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Now that we have all of the signals connected to your controller, we can start designing 
+the controller.  Remember to follow the coding standards - you can find a link above if you need a reminder.
+Since this module has no clock and reset inputs this will be strictly combinational.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">A processors control unit is responsible for decoding an instruction and setting up the data path
+(by changing control signals) to execute that instruction.  For example, on a Load Word instruction,
+the control unit must change the mux to use the <span class="verilog">data_memory</span> data output rather
+than the alu result as the <span class="verilog">register_file</span> write data source.  At the same time,
+it must assert the <span class="verilog">Write Enable</span> signal to the register file.  Of course, there
+are other signals that will need to be set for a Load Word, these are just a few examples.  For each of the
+control signals in your datapath you must program the controller to output the correct values for each
+instruction your processor will execute.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">In this lab your controller will need to decode the following instructions correctly: 
+<b>LW, SW, ADD, ADDI, SUB, AND, OR, NOR, XOR</b>.  <br> You can refer to your
+textbook for details on what each is supposed to do.  Begin by writing
+your <span class="verilog">always @(*)</span> block and checking the
+instruction input bits to detect which instruction is being executed.  Remember
+that all of the control signals must have <i>some</i> value assigned, even
+though not all of them are important for every instruction.  It is not acceptable
+to assign them <span class="verilog">x</span> for "don't care".</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Its OK to individually decode each possible instruction, but looking for common 
+patterns in the instructions might help you decode them more easily.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Look in your text book for the opcodes and function codes of the various instructions.  The green card at
+the front is useful, as well as figure B.10.2 and the instrunction listing in the appendix at the back.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><b>NOTE:</b> Remember that our ALU and datapath are slightly different than what you'll find in 
+the textbook so take care to, for example, provide the right ALU function codes.  Here's a reminder of
+what that module looks like.</p>
+
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="ModuleSpec">
+	<b>The <span class="verilog">alu</span> module:</b><br>
+	<table><tbody><tr>
+	<td><img src="./lab3-test_files/alu.png"></td>
+	<td><pre>module alu(
+	input [5:0] Func_in,
+	input [31:0] A_in,
+	input [31:0] B_in,
+	output [31:0] O_out,
+	output Branch_out,
+	output Jump_out
+);</pre></td>
+	</tr></tbody></table>
+	<div class="IODescription">
+		Because our ALU has different inputs and outputs, here's a list of operations it can perform and what value of Func_i each corresponds to.  You won't need information for branches and jumps for this lab, but you will for the lab 4.  They are included here for completeness.
+		<table>
+			<tbody><tr>
+<td>Func_in</td>
+<td>Operation</td>
+<td>O_out value</td>
+<td>Branch_out</td>
+<td>Jump_out</td>
+</tr>
+			<tr>
+<td>100000</td>
+<td>ADD</td>
+<td>A+B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100001</td>
+<td>ADD</td>
+<td>A+B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100010</td>
+<td>SUB</td>
+<td>A-B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100011</td>
+<td>SUB</td>
+<td>A-B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100100</td>
+<td>AND</td>
+<td>A AND B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100101</td>
+<td>OR</td>
+<td>A OR B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100110</td>
+<td>XOR</td>
+<td>A XOR B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>100111</td>
+<td>NOR</td>
+<td>A NOR B</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>101000</td>
+<td>Set-Less-Than Signed</td>
+<td>(signed(A) &lt; signed(B))</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>101001</td>
+<td>Set-Less-Than Unsigned</td>
+<td>(A &lt; B)</td>
+<td>0</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111000</td>
+<td>Branch Less Than Zero</td>
+<td>A</td>
+<td>(A &lt; 0)</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111001</td>
+<td>Branch Greater Than or Equal to Zero</td>
+<td>A</td>
+<td>(A &gt;= 0)</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111010</td>
+<td>Jump</td>
+<td>A</td>
+<td>0</td>
+<td>1</td>
+</tr>
+			<tr>
+<td>111011</td>
+<td>Jump</td>
+<td>A</td>
+<td>0</td>
+<td>1</td>
+</tr>
+			<tr>
+<td>111100</td>
+<td>Branch Equal</td>
+<td>A</td>
+<td>(A == B)</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111101</td>
+<td>Branch Not Equal</td>
+<td>A</td>
+<td>(A != B)</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111110</td>
+<td>Branch Less Than or Equal to Zero</td>
+<td>A</td>
+<td>(A &lt;= 0)</td>
+<td>0</td>
+</tr>
+			<tr>
+<td>111111</td>
+<td>Branch Greater Than Zero</td>
+<td>A</td>
+<td>(A &gt; 0)</td>
+<td>0</td>
+</tr>	
+		</tbody></table>
+	</div>
+</div>
+
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="Question">
+<b>Question 2:</b> Finish coding up your <span class="verilog">control</span> module.  Include the source in your report.  (Include the final version of your control.v source, after it has been tested and fixed).</div>
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="Question">
+<b>Question 3:</b> Create a test bench for your <span class="verilog">control</span> module.  Include a waveform in your report 
+that shows your control module decoding each instruction it needs to support.  You should check that all of the outputs are correct for each of the input instructions.</div>
+
+<h3 xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Testing the whole processor</h3>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">When you are satisfied that your control unit is behaving correctly, its time to move on to testing the whole processor.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Lets start with a simple test program.  This will use store a few values into registers 11, 12, and 13 in the processor, while testing all of the instructions you
+are supposed to have implemented.  You can find this application here: <a href="http://cseweb.ucsd.edu/classes/sp13/cse141L-a/Media/lab3/lab3-test.zip">Lab3 Test</a>.  In this zip file you will
+find several files:</p>
+<ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<li><span class="file_name">lab3-test.inst_rom.memh</span></li>
+	<li><span class="file_name">lab3-test.data_ram0.memh</span></li>
+	<li><span class="file_name">lab3-test.data_ram1.memh</span></li>
+	<li><span class="file_name">lab3-test.data_ram2.memh</span></li>
+	<li><span class="file_name">lab3-test.data_ram3.memh</span></li>
+	<li><span class="file_name">lab3-test.dis</span></li>
+	<li><span class="file_name">lab3-test.spim.s</span></li>
+</ul>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">To "load" this program into your processor we'll change some parameters on the provided <span class="verilog">init_rom</span> and <span class="verilog">data_memory</span> modules (they are in your datapath).
+First, unzip the files somewhere where there are <b>no spaces in the file name or any of the directory names leading to the file</b> and take note of the <b>full</b> path to the files.  In the
+<span class="verilog">inst_rom</span> module add the following parameter: <span class="verilog">INIT_PROGRAM</span>.  You should set the value of this parameter to the full path for
+the <span class="file_name">lab3-test.inst_rom.memh</span> file.  For example, your intantiation of the insturction ROM should now look something like this:</p>
+<pre xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">inst_rom #(
+	.INIT_PROGRAM("c:/myfiles/lab3-test.inst_rom.memh")
+) myInstructionRom (
+...
+);
+</pre>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Similarly, set the <span class="verilog">INIT_PROGRAM0, INIT_PROGRAM1</span>, etc. parameters on your instantiation of the <span class="verilog">data_memory</span> module.  <span class="verilog">INIT_PROGRAM0</span> should be 
+  <span class="file_name">lab3-test.data_ram0.memh</span>, etc.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><span class="file_name">lab3-test.dis</span> contains a listing of the MIPS instructions that make up this program.  
+With the assembly listing and modelsim you can verify that everything is behaving correctly.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><span class="file_name">lab3-test.spim.s</span> contains the source file for this application (also in MIPS assembly), this is the <i>pre-assembly</i> version and should be loadable into SPIM so you can see what the correct
+behavior of the application is in SPIM and compare that to your own processor.  See here: <a href="http://cseweb.ucsd.edu/classes/wi12/cse141-a/demos/spim/PCSpim-Tutorial.pdf">141 SPIM Tutorial</a> for some
+instructions on downloading and using SPIM.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">This test applications performs loads, stores, and arithmetic operations to set specific values into registers 11, 12 and 13 of your processor.  
+Because we don't have branches or the <span class="verilog">LUI</span> instruction yet, we have to play a few tricks to set all of the values.  You'll notice
+that this application creates a table of values in memory (starting at address 0x10000000) with each word having one bit set.  It later uses adds, subtracts, 
+and logic operators to load the bits it needs into the various registers.  If your processor is working and correctly implements all of the instructions listed
+above, your should get 3 human "readable" words in the hexadecimal values in registers 11, 12 and 13.  (Remember to set the Radix to hexadecimal in modelsim or you won't see the values).</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Now we are set to simulate the whole processor.  Use the test bench (<span class="file_name">testbench.v</span>) provided with the modules for Lab 2.  In addition to
+generating a clock and reset for your processor, this test bench also includes some code to print out when your processor
+writes to the serial port.  We'll use that for the next program.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><b>Double check that your program counter resets to <span class="verilog">32'h003FFFFC</span> at the start of your simulation or the applications won't work correctly.</b>  You can check if this value is correct by looking at the simulation and inspecting the PC register's output value while the reset signal is still high.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">To help you debug your processor, here's one way that we work through bugs in the design.  By 
+comparing the MIPS assembly of the test program to your processor's simulation waveforms, you 
+can decide if you proecssor is executing the code correctly.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">If you open up the source listing you can see that the first instruction is at address 0x00400000 and is an addi instrunction:<br>
+</p><pre>00400000 &lt;__start&gt;:
+  400000:       200a4000        addi    t2,zero,16384
+</pre>
+
+You can simulate your design and, by looking at the output value of your 
+<span class="verilog">Program Counter</span> module, find the instruction at address 
+<span class="verilog">0x00400000</span>.  You should see that the instruction output from 
+the <span class="verilog">inst_rom</span> matches the second column from the dissasembly 
+(<span class="file_name">lab3-test.dis</span>).  The value should be 
+<span class="verilog">0x200a4000</span>.  This is the encoded <span class="verilog">addi</span> 
+instruction.  Now you can look at the trace the instruction into your control unit and into the 
+register file where it should be reading from registers zero (0) and t2 (10).  You should be using 
+the immediate value (16384 or 0x4000) as an input to your ALU.  By looking at your control signals 
+and the inputs to the various modules you can check that your datapath is behaving correctly.  
+Verify that at the end of the cycle, you end up writing the value 0x4000 into register 10.<p></p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Once you have checked the first instruction and fixed any errors, you can move on to the 
+next one and repeat the process.</p>
+
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="Question">
+<b>Question 4:</b> Simulate your processor and make sure everything works as expected.  
+Simulate your design for 5us.  Include a waveform of the simulation showing the value of all the registers 
+at time 5us.  Show a waveform with all of the wires in <span class="file_name">processor.v</span> as well.
+Run the whole synthesis and place and route flow and include the Fmax (and minimum period in nanoseconds), Total logic elements, and the Total registers statistics from your design. (Just like we did in <a href="http://cseweb.ucsd.edu/classes/sp13/cse141L-a/lab1.html">lab 1</a>.)</div>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Lets try another simple test program.  This will use the serial output on your processor to write a message to you.
+You can find this application here: <a href="http://cseweb.ucsd.edu/classes/sp13/cse141L-a/Media/lab3/nbhelloworld.zip">No-Branch Hello World</a>.  In this zip file you will
+find several files:</p>
+<ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<li><span class="file_name">nbhelloworld.inst_rom.memh</span></li>
+	<li><span class="file_name">nbhelloworld.data_ram0.memh</span></li>
+	<li><span class="file_name">nbhelloworld.data_ram1.memh</span></li>
+	<li><span class="file_name">nbhelloworld.data_ram2.memh</span></li>
+	<li><span class="file_name">nbhelloworld.data_ram3.memh</span></li>
+	<li><span class="file_name">nbhelloworld.dis</span></li>
+	<li><span class="file_name">nbhelloworld.spim.s</span></li>
+</ul>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Point your processor at these files as we did for the program above.  <span class="file_name">*.instrom.memh</span> goes to the <span class="verilog">inst_rom</span> and the others to the <span class="verilog">data_memory</span>.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">This program uses the serial port interface of your processor to print characters out to the console.
+Beacuse we don't have branches, this program wouldn't behave correctly on real hardware (as opposed to in modelsim), because
+the serial port has a limited buffer, or temporary storage space, for new bytes to be written into.  If you run this program
+in SPIM, you'll see that only the first character gets printed.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Here's a description of the serial port interface that is included in your <span class="verilog">data_memory</span> module:</p>
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="ModuleSpec">
+	<p>The serial port is a memory-mapped IO device, meaning that it is accessed by your processor through loads and stores.  There are four registers in the serial port interface:</p>
+	<table>
+<tbody><tr>
+<th>Address</th>
+<th>Register Name</th>
+<th>Description</th>
+</tr>
+	<tr>
+<td>0xFFFF 0000</td>
+<td>Read Ready</td>
+<td>This register has value 0 when no data is available to be read, and 1 when there is data available.</td>
+</tr>
+	<tr>
+<td>0xFFFF 0004</td>
+<td>Read Data</td>
+<td>This register will have one byte of data when <i>Read Ready</i> has a value of 1, reading from this register allows the next byte to be received.</td>
+</tr>
+	<tr>
+<td>0xFFFF 0008</td>
+<td>Write Ready</td>
+<td>This register will have a value of 1 when a byte can be written to the <i>Write Data</i> register, otherwise it has value 0 to indicate that the buffer is full.</td>
+</tr>
+	<tr>
+<td>0xFFFF 000C</td>
+<td>Write Data</td>
+<td>Writing a byte to this register when <i>Write Ready</i> has a value of 1 will cause the byte to be sent over the serial link.</td>
+</tr>
+	</tbody></table>
+	<p>So to write a character to the serial port we have to perform a store to the serial port:</p>
+	<pre>#assuming $10 has value 0xFFFF0000
+#and $11 contains the byte we want to write:
+sw $11, 12($10)		#write to the Write Data register
+</pre>
+	<p>Really, we need to check the <i>Write Ready</i> register before we write to the data port, but without loops this is difficult, so this application doesn't do the checks.  If we had loops, the code would look like this:</p>
+	<pre>#assuming $10 has value 0xFFFF0000
+#and $11 contains the byte we want to write:
+
+loop:
+lw	$12, 8($10)	#read Write Ready
+beq	$0, $12, loop	#loop if Write Ready eq 0
+nop
+sw $11, 12($10)		#write to the Write Data register
+	</pre>
+</div>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Try running this program on your processor and in SPIM and see the difference in behavior - our processor's serial port simulates a very fast serial link so that the <i>Write Data</i> register is always writable - SPIM requires 3000 to 4000 cycles between writes to the <i>Write Data</i> register.</p>
+
+<div xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" class="Question">
+<b>Question 5:</b>Simulate for 1us and put the output from the messages panel (usually at the bottom of the modelsim window) in your report.  
+Also include a waveform that shows all of the wires in <span class="file_name">processor.v</span>.  What happens if you simulate for another 10us?  You should see something puzzling occur.  Include the simulator output text in your report.  
+Identify at what PC value the strange behavior starts at, and explain why it occurs.</div>
+
+<p></p>
+<table width="100%" cellpadding="2" border="0"><tbody><tr>
+<td bgcolor="pink"><span style="font-weight:bold">Deliverable</span></td>
+<td bgcolor="pink">
+<p></p>
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+</p><ul>
+<li> Submit your lab as a single zip file at <a href="http://ted.ucsd.edu/">ted.ucsd.edu</a>. The link to upload the file is available under "Assignments"-&gt;"Lab 3: Single-Cycle MIPS Control". The deadline for submitting your report is <b>Monday, April 22nd by 3PM </b>. Do not send softcopies to TAs email ids.</li>
+<li>The zip file needs to:</li>
+<ul>
+<li> Be named <b>cse141L-lab3-LastName-FirstName.zip</b>
+  with your last name and first name substituted for LastName and
+  FirstName, respectively.</li>
+<li> Include a single-pdf  report that answers all of the questions found in the lab description - including
+  questions, verilog source code, graphs, screen-shots, etc.  There
+  are many tools out there capable of integrating text and graphics
+  and producing PDF files (OpenOffice does a pretty good job).</li>
+<li>Your project source code and quartus project files - we should be able to build your project without errors from these files.  (Except for path problems to *.memh files).</li>
+</ul>
+</ul>
+<p></p>
+<p></p>
+</td>
+<td bgcolor="pink">
+<span style="font-weight: bold">Due: </span>April 22 </td>
+</tr></tbody></table>
+<hr>
+<script src="./lab3-test_files/urchin.js" type="text/javascript"></script><script type="text/javascript">
+      _uacct = "UA-1672965-2";
+      urchinTracker();
+    </script>
+
+
+</body></html>

@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "secureip" -o "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/hdl/tb_top_isim_beh.exe" -prj "C:/Users/Sam/Documents/GitHub/HLSCore/processors/simple/hdl/tb_top_beh.prj" "work.tb_top" 
